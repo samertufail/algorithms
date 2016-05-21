@@ -44,20 +44,20 @@ Westin, 2015-05-01, 2015-05-20
 
 struct Schedule
 {
-	int date_;
-	unsigned int occupancy_;
-	int maxRoomsOccupied_;
-	Schedule(int date, unsigned int occupancy) : date_(date), occupancy_(occupancy), maxRoomsOccupied_(0) {}
+	int date;
+	unsigned int occupancy;
+	int maxRoomsOccupied;
+	Schedule(int date, unsigned int occupancy) : date(date), occupancy(occupancy), maxRoomsOccupied(0) {}
 };
 
 class Availiblity {
 private:
-	unordered_map<string, pair<int,vector<Schedule>>> hotelMap_; // key: Hotel Name - value: pair<rooms,schedule list>
+	unordered_map<string, pair<int, vector<Schedule>>> hotelMap; // key: Hotel Name - value: pair<rooms,schedule list>
 
-	// Sorts a structure of schedule which holds checkin/out dates
+																  // Sorts a structure of schedule which holds checkin/out dates
 	static bool sortSchedule(const Schedule &a, const Schedule &b)
 	{
-		return a.date_ < b.date_;
+		return a.date < b.date;
 	}
 
 	// Converts a string date of format 2015-03-02 to 20150302
@@ -78,7 +78,7 @@ private:
 			stringstream lineStream(line);
 			string name = "", rooms = "";
 			getline(lineStream, name, ','); getline(lineStream, rooms, ',');
-			hotelMap_[name] = make_pair<int, vector<Schedule>>(stoi(rooms), {});
+			hotelMap[name] = make_pair<int, vector<Schedule>>(stoi(rooms), {});
 		}
 
 		// Get bookings data
@@ -87,25 +87,25 @@ private:
 		{
 			stringstream lineStream(line); string name = "", checkin = "", checkout = "";
 			getline(lineStream, name, ','); getline(lineStream, checkin, ','); getline(lineStream, checkout, ',');
-			hotelMap_[name].second.push_back(Schedule(NormalizeDate(checkin), 1));
-			hotelMap_[name].second.push_back(Schedule(NormalizeDate(checkout), 0));
+			hotelMap[name].second.push_back(Schedule(NormalizeDate(checkin), 1));
+			hotelMap[name].second.push_back(Schedule(NormalizeDate(checkout), 0));
 		}
 
 		// Sort the rooms by date and at each date keep track of availabile and occupied rooms
-		auto endMap = hotelMap_.end();
-		for (auto it = hotelMap_.begin(); it != endMap; ++it)
+		auto endMap = hotelMap.end();
+		for (auto it = hotelMap.begin(); it != endMap; ++it)
 		{
 			sort((*it).second.second.begin(), (*it).second.second.end(), sortSchedule);
 			int size = (*it).second.second.size(); int count = 0;
 			for (int i = 0; i < size; ++i)
 			{
-				if ((*it).second.second[i].occupancy_ == 1)
-				{ 
-					count++; (*it).second.second[i].maxRoomsOccupied_ = count;
+				if ((*it).second.second[i].occupancy == 1)
+				{
+					count++; (*it).second.second[i].maxRoomsOccupied = count;
 				}
 				else
 				{
-					--count; (*it).second.second[i].maxRoomsOccupied_ = count;
+					--count; (*it).second.second[i].maxRoomsOccupied = count;
 				}
 			}
 		}
@@ -119,16 +119,16 @@ public:
 		int start = NormalizeDate(startDate); int end = NormalizeDate(endDate);
 		if (start > end) { cout << "Checkin date is > checkout date" << endl; return; }
 		// Sort the rooms by date and at each date keep track of availabile and occupied rooms
-		auto endMap = hotelMap_.end();
-		for (auto it = hotelMap_.begin(); it != endMap; ++it)
+		auto endMap = hotelMap.end();
+		for (auto it = hotelMap.begin(); it != endMap; ++it)
 		{
 			int size = (*it).second.second.size(); int maxCount = INT_MIN;
 			for (int i = 0; i < size; ++i)
 			{
-				Schedule sched = (*it).second.second[i]; 
+				Schedule sched = (*it).second.second[i];
 				// Get the Max Available
-				if ((sched.date_ >= start && sched.date_ <= end) || sched.date_ <= start || sched.date_ >= end)
-					maxCount = max(maxCount, sched.maxRoomsOccupied_);
+				if ((sched.date >= start && sched.date <= end) || (sched.date <= start) || (sched.date >= end))
+					maxCount = max(maxCount, sched.maxRoomsOccupied);
 			}
 
 			if ((*it).second.first > maxCount)
@@ -140,7 +140,7 @@ public:
 void runTests()
 {
 	Availiblity avail;
-	avail.GetAvailibility("2015-04-20", "2015-04-22");
+	avail.GetAvailibility("2015-04-02", "2015-04-03");
 }
 
 int main(int argc, char *argv[]) {
