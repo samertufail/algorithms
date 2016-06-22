@@ -69,7 +69,7 @@ public:
         }
         return vol;
     }
-	
+
     int trap(vector<int>& height) {
         int len = height.size();
         if (len < 1) return 0;
@@ -79,6 +79,31 @@ public:
         int volRight = GetVolume(height, index, len - 1, false);
         return volLeft + volRight;
     }
+
+    int trapOptimised(vector<int>& height)
+    {
+        int len = height.size();
+        if (len <= 1) return 0;
+
+        int maxl = 0, maxr = 0, leftb = 0, rightb = len - 1, water = 0;
+        while (leftb <= rightb)
+        {
+            if (height[leftb] <= height[rightb])
+            {
+                if (height[leftb] >= maxl) maxl = height[leftb];
+                else water += maxl - height[leftb];
+                ++leftb;
+            }
+            else
+            {
+                if (height[rightb] >= maxr) maxr = height[rightb];
+                else water += maxr - height[rightb];
+                --rightb;
+            }
+        }
+
+        return water;
+    }
 };
 
 
@@ -87,15 +112,19 @@ void runTests()
     Solution s;
     vector<int> elevation = { 0,1,0,2,1,0,1,3,2,1,2,1 };
     assert(6 == s.trap(elevation));
+    assert(6 == s.trapOptimised(elevation));
 
     vector<int> elevation1 = { 0,2,0 };
     assert(0 == s.trap(elevation1));
+    assert(0 == s.trapOptimised(elevation1));
 
     vector<int> elevation2 = { 2,0,2 };
     assert(2 == s.trap(elevation2));
+    assert(2 == s.trapOptimised(elevation2));
 
     vector<int> elevation3 = { 4,2,3 };
     assert(1 == s.trap(elevation3));
+    assert(1 == s.trapOptimised(elevation3));
 }
 
 int main(int argc, char *argv[]) {
