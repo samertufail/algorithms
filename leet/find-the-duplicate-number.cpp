@@ -34,7 +34,9 @@ There is only one duplicate number in the array, but it could be repeated more t
 
 class Solution {
 public:
-
+    //Ref:
+    //[1] https://en.wikipedia.org/wiki/Cycle_detection
+    //[2] https://www.quora.com/How-does-Floyds-cycle-finding-algorithm-work
     int findDuplicate(vector<int>& nums) {
         int len = nums.size();
         if (len <= 0) return 0;
