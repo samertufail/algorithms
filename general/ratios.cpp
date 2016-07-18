@@ -63,7 +63,7 @@ public:
 
     double CalculateRatio(string num, string den) {
         unordered_map<string, bool> visited;
-        if (graph.find(num) == graph.end() && graph.find(den) == graph.end()) return 0.0;
+        if (graph.find(num) == graph.end() || graph.find(den) == graph.end()) return 0.0;
         double ans = 1.0; bool found = false;
         DFS(visited, ans, num, den,found);
         return found ? ans : 0.0;
