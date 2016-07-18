@@ -32,24 +32,41 @@ public:
         graph[v2].push_back(vertex(v1, 1 / weight));
     }
 
-    double DFS(unordered_map<string, bool>& visited, double ans, string& start, string& end)
+    void DFS(unordered_map<string, bool>& visited, double& ans, string& start, string& end, bool& found)
     {
         visited[start] = true;
-        for (auto it : graph[start])
+
+        if (start == end) 
         {
-            if (!visited[it.node])
+            found = true;  return;
+        }
+        else
+        {
+            vector<vertex> adj = graph[start];
+            for (auto it : adj)
             {
-                ans *= it.weight;
-                if (it.node == end) return ans;
-                return DFS(visited, ans, it.node, end);
+                if (!visited[it.node])
+                {
+                    ans *= it.weight;
+                    DFS(visited, ans, it.node, end,found);
+                }
             }
         }
-        return 1.0;
+
+        if (!found)
+        {
+            // Reset and set current vertex as false
+            visited[start] = false;
+            ans = 1.0;
+        }
     }
+
     double CalculateRatio(string num, string den) {
         unordered_map<string, bool> visited;
-        if (graph.find(num) == graph.end() || graph.find(den) == graph.end()) return 0.0;
-        return DFS(visited, 1.0, num, den);
+        if (graph.find(num) == graph.end() && graph.find(den) == graph.end()) return 0.0;
+        double ans = 1.0; bool found = false;
+        DFS(visited, ans, num, den,found);
+        return found ? ans : 0.0;
     }
 };
 
