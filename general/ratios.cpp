@@ -48,7 +48,7 @@ public:
     }
     double CalculateRatio(string num, string den) {
         unordered_map<string, bool> visited;
-        if (graph.find(num) == graph.end() && graph.find(den) == graph.end()) return 0.0;
+        if (graph.find(num) == graph.end() || graph.find(den) == graph.end()) return 0.0;
         return DFS(visited, 1.0, num, den);
     }
 };
