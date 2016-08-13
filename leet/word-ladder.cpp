@@ -44,54 +44,47 @@ return its length 5.
 */
 
 class Solution {
-public:
-    int ladderLength(string beginWord, string endWord, unordered_set<string>& wordList) {
-        int n = beginWord.length();
-        wordList.insert(beginWord);
-        wordList.insert(endWord);
-        string primary = beginWord;
-        string temp = "";
-        int res = 0;
-
-        while (primary != temp && primary != endWord)
+private:
+    void generateWords(string& primary, unordered_set<string>& wordList, queue<string>& tosearch)
+    {
+        wordList.erase(primary);
+        int n = primary.length();
+        for (int i = 0; i < n; ++i)
         {
-            temp = primary;
-            bool found = false;
-            for (int i = 0; i < n && !found; ++i)
+            char restore = primary[i];
+            for (int j = 0; j < 26; ++j)
             {
-                char restore = primary[i];
-                if (primary[i] != endWord[i]) primary[i] = endWord[i];
-                if (wordList.find(primary) != wordList.end() && primary != beginWord)
+                primary[i] = j + 'a';
+                if (wordList.find(primary) != wordList.end())
                 {
-                    found = true;
-                    ++res;
+                    tosearch.push(primary);
                     wordList.erase(primary);
                 }
-                else primary[i] = restore;
             }
+            primary[i] = restore;
+        }
+    }
+public:
+    int ladderLength(string beginWord, string endWord, unordered_set<string>& wordList) {
+        wordList.insert(endWord);
+        queue<string> q;
+        generateWords(beginWord, wordList, q);
+        int res = 2;
 
-            if (!found)
+        while (!q.empty())
+        {
+            int n = q.size();
+            for (int i = 0; i < n; ++i)
             {
-                for (int i = 0; i < n && !found; ++i)
-                {
-                    char restore = primary[i];
-                    for (int j = 0; j < 26; ++j)
-                    {
-                        primary[i] = 'a' + j;
-                        if (wordList.find(primary) != wordList.end() && primary != beginWord)
-                        {
-                            found = true;
-                            wordList.erase(primary);
-                            ++res;
-                            break;
-                        }
-                        else primary[i] = restore;
-                    }
-                }
+                string word = q.front();
+                q.pop();
+                if (word == endWord) return res;
+                generateWords(word, wordList, q);
             }
+            ++res;
         }
 
-        return primary == endWord ? res + 1 : 0;
+        return 0;
     }
 };
 
